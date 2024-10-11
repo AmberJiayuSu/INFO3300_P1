@@ -1,0 +1,210 @@
+<html>
+    <head>
+        <title>INFO 3300 - project1</title>
+        <script src="https://d3js.org/d3.v7.min.js"></script>
+
+        <style>
+  
+            .gridlines line {
+              stroke: #bbb;
+            }
+            .gridlines .domain {
+                stroke: none;
+            }
+          
+        </style>
+    </head>
+
+
+    <body>
+        <svg id="Sanfroncisco" height="600" width="600" style="border: 1px solid black"> </svg>
+
+        <script>
+            const svg1=d3.select("svg#Sanfroncisco");
+
+            //margin, width, height
+            const margins ={top: 20, right: 20, bottom: 20, left: 30};
+            const width=svg1.attr("width");
+            const height=svg1.attr("height");
+            const chartWidth=width-margins.left-margins.right;
+            const chartHeight=height-margins.top-margins.bottom;
+            console.log(margins.top+height+10);
+            
+
+            
+            d3.csv('sanfrancisco.csv').then((data) => {
+                console.log(data);
+                const xHumidityExtent=d3.extent(data, d=>Number(d['Mean.Humidity']));
+                const xHumidityScale=d3.scaleLinear()
+                                   .domain(xHumidityExtent)
+                                   .range([0,chartWidth]);
+
+                const yVisibilityExtent=d3.extent(data, d=>Number(d['Mean.VisibilityMiles']));
+                const yVisibilityScale=d3.scaleLinear()
+                                   .domain(yVisibilityExtent)
+                                   .range([chartHeight,0]);
+                console.log(xHumidityExtent);
+                console.log(yVisibilityExtent);
+
+                //Axes
+                let bottomHumidityAxis=d3.axisBottom(xHumidityScale);
+                svg1.append("g")
+                    .attr("transform", `translate(${margins.left},${margins.top+chartHeight})`)
+                    .call(bottomHumidityAxis);
+
+                let bottomGridlines=d3.axisBottom(xHumidityScale).tickFormat("").tickSize(-chartHeight-10);
+                svg1.append("g")
+                   .attr("class","gridlines")
+                   .attr("transform", `translate(${margins.left},${margins.top+chartHeight+10})`)
+                   .call(bottomGridlines);
+
+                let yVisibilityAxis=d3.axisLeft(yVisibilityScale);
+                svg1.append("g")
+                    .attr("transform", `translate(${margins.left},${margins.top})`)
+                    .call(yVisibilityAxis);
+                let yVisibilityAxisGridLine=d3.axisLeft(yVisibilityScale).tickFormat('').tickSize(-chartWidth-10);
+                svg1.append("g")
+                    .attr("class", "gridlines")
+                    .attr("transform", `translate(${margins.left-10},${margins.top})`)
+                    .call(yVisibilityAxisGridLine);
+
+                let charArea=svg1.append('g')
+                    .attr('transform',`translate(${margins.left},${margins.top})`);
+
+                    let springdays=0;
+
+                //Circles!
+                data.forEach( (d)=>{
+                    let dateYr=d.Date.substring(0,4);
+                    let season=d.season;
+                    
+                    if(dateYr==='2015' && season=='Spring'){
+                        
+                        charArea.append('circle')
+                                .attr('r',3)
+                                .attr('cx',xHumidityScale(d['Mean.Humidity']))
+                                .attr('cy',yVisibilityScale(d['Mean.VisibilityMiles']))
+                                .attr("opacity",0.5)
+                                .style("fill", "lime");
+                    }
+                    
+
+                    if(dateYr==='2015' && season=='Summer'){
+                        
+                        charArea.append('circle')
+                                .attr('r',3)
+                                .attr('cx',xHumidityScale(d['Mean.Humidity']))
+                                .attr('cy',yVisibilityScale(d['Mean.VisibilityMiles']))
+                                .attr("opacity",0.5)
+                                .style("fill", "yellow");
+                    }
+
+                    if(dateYr==='2015' && season=='Autumn'){
+                        
+                        charArea.append('circle')
+                                .attr('r',3)
+                                .attr('cx',xHumidityScale(d['Mean.Humidity']))
+                                .attr('cy',yVisibilityScale(d['Mean.VisibilityMiles']))
+                                .attr("opacity",0.5)
+                                .style("fill", "red");
+                    }
+
+                    if(dateYr==='2015' && season=='Winter'){
+                        charArea.append('circle')
+                                .attr('r',3)
+                                .attr('cx',xHumidityScale(d['Mean.Humidity']))
+                                .attr('cy',yVisibilityScale(d['Mean.VisibilityMiles']))
+                                .attr("opacity",0.5)
+                                .style("fill", "dodgerblue");
+                    }
+                })
+                console.log(springdays);
+
+                // //Spring Mean Vis
+                // let springMeanVis=0;
+                // let springMeanVisCount=0;
+
+                // //Spring Mean Humidity
+                // let springMeanHumidity=0;
+                // let springMeanHumidityCount=0;
+
+                // // //Spring Max Vis
+                // // let springMax=0;
+                // // let springMaxCount=0;
+
+                // // //Spring Mean Vis
+                // // let springMean=0;
+                // // let springMeanCount=0;
+
+                // //Summer Mean Vis
+                // let summerMeanVis=0;
+                // let summerMeanVisCount=0;
+
+                // //Summer Mean Humidity
+                // let summerMeanHumidity=0;
+                // let summerMeanHumidityCount=0;
+
+                // for(let i=0;i<data.length;i++){
+                //     const dateYr=data[i].Date.substring(0,4);
+                //     const season=data[i].season;
+                //     //Spring
+                //      if(dateYr==='2015'&&season==='Spring'){
+
+                //         // //Spring Max Humidity
+                //         // springMax += Number(data[i]['Max.Humidity']);
+                //         // springMaxCount += 1;
+                //         // console.log(data[i]['Max.Humidity']);
+
+                //         //Spring Mean Vis
+                //         springMeanVis += Number(data[i]['Mean.VisibilityMiles']);
+                //         springMeanVisCount += 1;
+                //         console.log(data[i]['Mean.VisibilityMiles']);
+
+                //         //Spring Mean Humidity
+                //         springMeanHumidity += Number(data[i]['Mean.Humidity']);
+                //         springMeanHumidityCount += 1;
+                //         console.log(data[i]['Mean.Humidity']);
+
+                //         // //Spring Max Vis
+                //         // springMax += Number(data[i]['Max.VisibilityMiles']);
+                //         // springMaxCount += 1;
+                //         // console.log(data[i]['Max.VisibilityMiles']);
+                //      }
+
+                //      //Summer
+                //      if(dateYr==='2015'&&season==='Summer'){
+                //         //Mean Vis
+                //         summerMeanVis += Number(data[i]['Mean.VisibilityMiles']);
+                //         summerMeanVisCount += 1;
+
+                //         //Mean Humidity
+                //         summerMeanHumidity += Number(data[i]['Mean.Humidity']);
+                //         summerMeanHumidityCount += 1;
+                //         console.log(data[i]['Mean.Humidity']);
+                //         }
+
+                    //Autumn
+                    // if(dateYr==='2015'&&season==='Autumn'){
+                    //     //Mean Vis
+                    //     fallMeanVis += Number(data[i]['Mean.VisibilityMiles']);
+                    //     fallMeanVisCount += 1;
+
+                    //     //Mean Humidity
+                    //     fallMeanHumidity += Number(data[i]['Mean.Humidity']);
+                    //     fallMeanHumidityCount += 1;
+                    //     console.log(data[i]['Mean.Humidity']);
+                    //     }
+                 //}
+                //  console.log(springMeanVis/springMeanVisCount);
+                //  console.log(springMeanHumidity/springMeanHumidityCount);
+                //  console.log(summerMeanVis/summerMeanVisCount);
+                //  console.log(summerMeanHumidity/summerMeanHumidityCount);
+                //  console.log(fallMeanVis/fallMeanVisCount);
+                //  console.log(summerMeanHumidity/fallHumidityCount);
+
+            })
+        </script>
+        
+
+    </body>
+</html>

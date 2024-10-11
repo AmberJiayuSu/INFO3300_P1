@@ -1,0 +1,146 @@
+<html>
+    <head>
+        <title>INFO 3300 - project1</title>
+        <script src="https://d3js.org/d3.v7.min.js"></script>
+
+        <style>
+  
+            .gridlines line {
+              stroke: #bbb;
+            }
+            .gridlines .domain {
+                stroke: none;
+            }
+          
+        </style>
+    </head>
+
+
+    <body>
+        <svg id="Sanfroncisco_humidity" height="250" width="600" style="border: 1px solid black"> </svg>
+
+        <script>
+            
+            const svg1=d3.select("svg#Sanfroncisco_humidity");
+
+            //margin, width, height
+            const margins ={top: 20, right: 20, bottom: 20, left: 30};
+            const width=svg1.attr("width");
+            const height=svg1.attr("height");
+            const chartWidth=width-margins.left-margins.right;
+            const chartHeight=height-margins.top-margins.bottom;
+            
+
+            function daysInYear (a) {
+                let month=a.getMonth();
+                let day=0;
+                if(month===1){
+                    day=a.getD
+                }
+            }
+        
+            
+            d3.csv('sanfrancisco.csv').then((data) => {
+                const parsedDate=d3.timeParse("%Y-%m-%d");
+                //const dayOfYear = Math.floor((data-new Date(data.getFullYear(), 0, 0)));
+                //console.log(dayOfYear);
+                //console.log(parsedDate);
+                //console.log(data);
+
+                
+                const HumidityExtent=d3.extent(data, d=>Number(d['Mean.Humidity']));
+                const HumidityScale=d3.scaleSequential()
+                                   .domain(HumidityExtent)
+                                   .range([0,1])
+                                   .interpolator(d3.interpolateBlues);
+
+                const dayScale = d3.scaleLinear()
+                                 .domain([0,366])
+                                 .range([0,chartWidth]);
+
+                const Xmonth=d3.extent(data, d=>Number(d['Date'].substring(5,7)));
+                const XmonthScale=d3.scaleLinear()
+                                    .domain(Xmonth)
+                                    .range([0,chartWidth]);
+                
+                const Yyear=d3.extent(data, d=>Number(d['Date'].substring(0,4)));
+                const YyearScale=d3.scaleLinear()
+                                   .domain(Yyear)
+                                   .range([chartHeight,0]);
+
+                
+
+                console.log(XmonthScale.domain());
+                console.log(HumidityExtent);
+
+
+
+                //Axes
+                let bottomMonthAxis=d3.axisBottom(XmonthScale);
+                console.log(bottomMonthAxis);
+                svg1.append("g")
+                     .attr("transform", `translate(${margins.left},${margins.top+chartHeight})`)
+                     .call(bottomMonthAxis);
+
+                let bottomGridlines=d3.axisBottom(XmonthScale).tickFormat("").tickSize(-chartHeight-10);
+                svg1.append("g")
+                    .attr("class","gridlines")
+                    .attr("transform", `translate(${margins.left},${margins.top+chartHeight+10})`)
+                    .call(bottomGridlines);
+
+                let YyearAxis=d3.axisLeft(YyearScale);
+                svg1.append("g")
+                     .attr("transform", `translate(${margins.left},${margins.top})`)
+                     .call(YyearAxis);
+                 let YyearAxisGridLines=d3.axisLeft(YyearScale).tickFormat('').tickSize(-chartWidth-10);
+                 svg1.append("g")
+                     .attr("class", "gridlines")
+                     .attr("transform", `translate(${margins.left-10},${margins.top})`)
+                     .call(YyearAxisGridLines);
+
+                 let charArea=svg1.append('g')
+                     .attr('transform',`translate(${margins.left},${margins.top})`);
+
+                //Circles!
+                let dayRN=0;
+                let yrOfPrev=data[0]['Date'].substring(0,4);
+                console.log(yrOfPrev);
+                data.forEach( (d)=>{
+                   const date = parsedDate(d['Date']); // Parse the date string
+                    const currYr = date.getFullYear(); // Get the year
+                    const currDayOfYear = d3.timeDay.count(d3.timeYear(date), date); 
+                  // dayRN = currDayOfYear;
+                    //console.log(dayRN);
+
+                    //let currYr=Number(d.Date.substring(0,4));
+
+                    // if(yrOfPrev===currYr){
+                    //     dayRN+=1;
+                    //     prevYr=currYr;
+                    //     //console.log(yrOfPrev+"   "+currYr);
+                    // }
+                    // if(yrOfPrev!=currYr){
+                    //     dayRN=1;
+                    //     prevYr=currYr;
+                    //     //console.log(yrOfPrev+" newyear  "+currYr);
+                    // }
+                    // dayRN+=1;
+                    // prevYr+=1;
+                    // //console.log(dayRN);
+                    
+                     //let currDay=Number(parseDate(d['Date']));
+                     let currHumidity=d['Mean.Humidity'];
+
+                    charArea.append('circle')
+                            .attr('r', 3)
+                            .attr('cx',  d => dayScale(currDayOfYear))
+                            .attr('cy', d => YyearScale(currYr))
+                            .style("fill",  HumidityScale(currHumidity))
+                    
+
+                })})
+        </script>
+        
+
+    </body>
+</html>
