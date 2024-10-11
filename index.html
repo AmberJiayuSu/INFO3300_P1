@@ -13,6 +13,10 @@
             stroke: none;
         }
 
+        h2{
+            display: block;
+        }
+
         body {
             width: 90%;
             font-family: 'Open Sans', sans-serif;
@@ -51,21 +55,30 @@
             width: 500px;
             height: 300px;
         }
+
+        
     </style>
 </head>
 
 <body>
+    
     <div class="chart-grid">
-        <div class="temp-container"> 
-            <svg id="sanfrancisco_temp" height="250" width="500" ></svg>
-        </div>
-        <div  class="temp-container">
-            <svg id="nyc_temp" height="250" width="500" ></svg>
-        </div>
-        <div  class="temp-container">
-            <svg id="miami_temp" height="250" width="500" ></svg>
-        </div>
+
         
+        
+            <div class="temp-container"> 
+                <svg id="sanfrancisco_temp" height="250" width="500" ></svg>
+            </div>
+            <div  class="temp-container">
+                <svg id="nyc_temp" height="250" width="500" ></svg>
+            </div>
+            <div  class="temp-container">
+                <svg id="miami_temp" height="250" width="500" ></svg>
+            </div>
+       
+        
+        
+
         <svg id="sanfrancisco_humidity" class="humidity-container"> </svg>
         <svg id="nyc_humidity" class="humidity-container"> </svg>
         <svg id="miami_humidity" class="humidity-container"> </svg>
