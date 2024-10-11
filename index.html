@@ -25,7 +25,7 @@
             margin-right: auto;
         }
 
-        .axis-label {
+        .axis {
             font-size: 10px;
             font-weight: 300;
         }
@@ -178,11 +178,6 @@
 
     </script>
 
-
-
-
-
-
     <script id="humidity">
         (function () {
 
@@ -321,8 +316,8 @@
                 width = 500 - margin.left - margin.right,
                 height = 500 - margin.top - margin.bottom;
 
-            const comfortableTemperature = 72;
-            const comfortableHumidity = 60;
+            const comfortableTemperature = 70;
+            const comfortableHumidity = 50;
 
             const cities = [
                 { name: 'San Francisco', file: sf, container: '#sanfrancisco_scatter' },
@@ -379,7 +374,7 @@
                             const season = month >= 3 && month <= 5 ? 'Spring' : month >= 6 && month <= 8 ? 'Summer' : month >= 9 && month <= 11 ? 'Autumn' : 'Winter';
                             return seasonYearColorScale(`${season}-${year}`);
                         })
-                        .style("opacity", 0.5);
+                        .style("opacity", 0.7);
 
 
                     svg.append("line")
@@ -391,6 +386,14 @@
                         .attr("stroke-width", 1)
                         .attr("stroke-dasharray", "4");
 
+                    svg.append("text")
+                        .attr("x", x(comfortableTemperature) + 160)
+                        .attr("y", -y(comfortableHumidity) - 30)
+                        .attr("text-anchor", "end")
+                        .attr("transform", "rotate(90)")
+                        .style("font-size", "10px")
+                        .text("Comfortable Temp");
+
                     svg.append("line")
                         .attr("x1", 0)
                         .attr("x2", width)
@@ -401,26 +404,33 @@
                         .attr("stroke-dasharray", "4");
 
                     svg.append("text")
+                        .attr("x", 50)
+                        .attr("y", y(comfortableHumidity) - 10)
+                        .attr("text-anchor", "middle")
+                        .style("font-size", "10px")
+                        .text("Comfortable Humidity");
+
+                    svg.append("text")
                         .attr("x", width / 2)
                         .attr("y", -10)
                         .attr("text-anchor", "middle")
                         .style("font-size", "16px")
                         .style("font-weight", "300")
-                        .text(`${city.name} (1980-2010)`);
+                        .text(`${city.name} `);
 
                     svg.append("text")
                         .attr("text-anchor", "end")
-                        .attr("x", width / 2 + 60)
+                        .attr("x", width / 2 + 50)
                         .attr("y", height + margin.top)
-                        .attr("class", "axis-label")
+                        .attr("class", "axis")
                         .text("Mean Temperature (F)");
 
                     svg.append("text")
                         .attr("text-anchor", "end")
                         .attr("transform", "rotate(-90)")
-                        .attr("x", -height / 2 + 20)
+                        .attr("x", -height / 2 + 30)
                         .attr("y", -margin.left + 30)
-                        .attr("class", "axis-label")
+                        .attr("class", "axis")
                         .text("Humidity(%)");
 
                     const legendData = seasonYearColorScale.domain().map(key => ({
@@ -436,8 +446,8 @@
 
                     legend.append("rect")
                         .attr("x", width + 15)
-                        .attr("width", 18)
-                        .attr("height", 18)
+                        .attr("width", 15)
+                        .attr("height", 15)
                         .style("fill", d => d.color);
 
                     legend.append("text")
