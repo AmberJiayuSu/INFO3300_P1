@@ -13,7 +13,7 @@
             stroke: none;
         }
 
-        h2{
+        h2 {
             display: block;
         }
 
@@ -55,29 +55,22 @@
             width: 500px;
             height: 300px;
         }
-
-        
     </style>
 </head>
 
 <body>
-    
+
     <div class="chart-grid">
 
-        
-        
-            <div class="temp-container"> 
-                <svg id="sanfrancisco_temp" height="250" width="500" ></svg>
-            </div>
-            <div  class="temp-container">
-                <svg id="nyc_temp" height="250" width="500" ></svg>
-            </div>
-            <div  class="temp-container">
-                <svg id="miami_temp" height="250" width="500" ></svg>
-            </div>
-       
-        
-        
+        <div class="temp-container">
+            <svg id="sanfrancisco_temp" height="250" width="500"></svg>
+        </div>
+        <div class="temp-container">
+            <svg id="nyc_temp" height="250" width="500"></svg>
+        </div>
+        <div class="temp-container">
+            <svg id="miami_temp" height="250" width="500"></svg>
+        </div>
 
         <svg id="sanfrancisco_humidity" class="humidity-container"> </svg>
         <svg id="nyc_humidity" class="humidity-container"> </svg>
@@ -87,7 +80,7 @@
         <div id="nyc_scatter" class="scatter-container"></div>
         <div id="miami_scatter" class="scatter-container"></div>
 
-        
+
     </div>
 
     <script id="globalConst">
@@ -96,15 +89,15 @@
         const nyc = "./nyc_post1980.csv";
     </script>
 
-    <script id = "heatmap">
+    <script id="heatmap">
         let svg_temp_sf = d3.select("#sanfrancisco_temp");
-        let svg_temp_nyc = d3.select("#nyc_temp"); 
+        let svg_temp_nyc = d3.select("#nyc_temp");
         let svg_temp_miami = d3.select("#miami_temp");
-        
+
         const cities = [
-                { name: 'San Francisco', file: sf, svg: '#sanfrancisco_temp' },
-                { name: 'New York City', file: nyc, svg: '#nyc_temp' },
-                { name: 'Miami', file: miami, svg: '#miami_temp' }
+            { name: 'San Francisco', file: sf, svg: '#sanfrancisco_temp' },
+            { name: 'New York City', file: nyc, svg: '#nyc_temp' },
+            { name: 'Miami', file: miami, svg: '#miami_temp' }
         ];
 
         const margins = { top: 20, right: 20, bottom: 25, left: 45 };
@@ -112,21 +105,21 @@
         const height = 250;
         const chartWidth = width - margins.left - margins.right;
         const chartHeight = height - margins.top - margins.bottom;
-        const tempExtent = [0,20,40,60,100]; 
-        const yearExtent = [1980, 2015]; 
+        const tempExtent = [0, 20, 40, 60, 100];
+        const yearExtent = [1980, 2015];
 
         const rectWidth = chartWidth / 365;
         const rectHeight = chartHeight / (yearExtent[1] - yearExtent[0] + 1) + 0.5;
 
-        const rectHorOffset =rectWidth/2;
-        const rectVerOffset = rectHeight/2;
+        const rectHorOffset = rectWidth / 2;
+        const rectVerOffset = rectHeight / 2;
 
         let yearScale = d3.scaleLinear()
             .domain(yearExtent)
             .range([0, chartHeight]);
 
         let dayScale = d3.scaleLinear()
-            .domain([1,365])
+            .domain([1, 365])
             .range([0, chartWidth]);
 
         const monthOffset = chartWidth / 12;
@@ -135,54 +128,54 @@
             .domain([1, 12])
             .range([0, chartWidth - monthOffset]);
 
-        
 
-        let colorScale = d3.scaleSequential().domain([100,0]).interpolator(d3.interpolateRdYlBu);
-        
 
-        const heatmap = async function(city){
-            const data = await d3.csv(city.file,d3.autoType);
-            
+        let colorScale = d3.scaleSequential().domain([100, 0]).interpolator(d3.interpolateRdYlBu);
+
+
+        const heatmap = async function (city) {
+            const data = await d3.csv(city.file, d3.autoType);
+
 
             const heatmapsvg = d3.select(city.svg);
-            let annotations = heatmapsvg.append("g").attr("id","annotations");
+            let annotations = heatmapsvg.append("g").attr("id", "annotations");
 
             let leftAxis = d3.axisLeft(yearScale).tickFormat(d3.format("d"));
 
             annotations.append("g")
-                        .attr("class", "heatmap y axis")
-                        .attr("transform",`translate(${margins.left-5},${margins.top -  rectHeight/2})`)
-                        .call(leftAxis)
-                        .select(".domain")  
-                        .attr("display", "none");
+                .attr("class", "heatmap y axis")
+                .attr("transform", `translate(${margins.left - 5},${margins.top - rectHeight / 2})`)
+                .call(leftAxis)
+                .select(".domain")
+                .attr("display", "none");
 
             let bottomAxis = d3.axisBottom(monthScale);
 
             annotations.append("g")
-                        .attr("class", "heatmap x axis")
-                        .attr("transform",`translate(${margins.left + monthOffset/2},${margins.top + chartHeight + 5})`)
-                        .call(bottomAxis)
-                        .select(".domain")  
-                        .attr("display", "none");
+                .attr("class", "heatmap x axis")
+                .attr("transform", `translate(${margins.left + monthOffset / 2},${margins.top + chartHeight + 5})`)
+                .call(bottomAxis)
+                .select(".domain")
+                .attr("display", "none");
 
             let chartArea = heatmapsvg.append('g')
-                            .attr("transform",`translate(${margins.left},${margins.top})`);
-            
+                .attr("transform", `translate(${margins.left},${margins.top})`);
+
             chartArea.selectAll("rect").data(data)
                 .join("rect")
-                .attr("x", d =>dayScale(d.Day))
+                .attr("x", d => dayScale(d.Day))
                 .attr("y", d => yearScale(d.Year) - rectHeight)
                 .attr("width", rectWidth)
                 .attr("height", rectHeight)
-                .attr("fill", d => colorScale(d['Mean.TemperatureF']));     
-                
+                .attr("fill", d => colorScale(d['Mean.TemperatureF']));
+
             console.log(data[0].Day);
         }
 
         heatmap(cities[0]);
         heatmap(cities[1]);
         heatmap(cities[2]);
-        
+
     </script>
 
 
@@ -332,9 +325,9 @@
             const comfortableHumidity = 60;
 
             const cities = [
-                { name: 'San Francisco', file: 'sanfrancisco.csv', container: '#sanfrancisco_scatter' },
-                { name: 'New York City', file: 'nyc.csv', container: '#nyc_scatter' },
-                { name: 'Miami', file: 'miami.csv', container: '#miami_scatter' }
+                { name: 'San Francisco', file: sf, container: '#sanfrancisco_scatter' },
+                { name: 'New York City', file: nyc, container: '#nyc_scatter' },
+                { name: 'Miami', file: miami, container: '#miami_scatter' }
             ];
 
             const seasonYearColorScale = d3.scaleOrdinal()
@@ -342,13 +335,13 @@
                     'Winter-1980', 'Winter-1990', 'Winter-2000', 'Winter-2010',
                     'Spring-1980', 'Spring-1990', 'Spring-2000', 'Spring-2010',
                     'Summer-1980', 'Summer-1990', 'Summer-2000', 'Summer-2010',
-                    'Fall-1980', 'Fall-1990', 'Fall-2000', 'Fall-2010'
+                    'Autumn-1980', 'Autumn-1990', 'Autumn-2000', 'Autumn-2010'
                 ])
                 .range([
-                    '#c6dbef', '#9ecae1', '#6baed6', '#1f77b4', // Winter shades
-                    '#ccece6', '#99d8c9', '#66c2a4', '#2ca02c', // Spring shades
-                    '#ff9999', '#ff4d4d', '#ff1a1a', '#b30000', // Summer shades
-                    '#ffcc66', '#ff9933', '#ff6600', '#cc5200'  // Fall shades
+                    '#c6dbef', '#9ecae1', '#6baed6', '#3182bd',
+                    '#c7e9c0', '#a1d99b', '#74c476', '#31a354',
+                    '#ffcccc', '#ff6666', '#ff3333', '#b30000',
+                    '#ffedcc', '#ffcc99', '#ff9966', '#e67300'
                 ]);
 
             function visualizeCityData(city) {
@@ -383,7 +376,7 @@
                             const date = new Date(d.Date);
                             const month = date.getMonth() + 1;
                             const year = date.getFullYear();
-                            const season = month >= 3 && month <= 5 ? 'Spring' : month >= 6 && month <= 8 ? 'Summer' : month >= 9 && month <= 11 ? 'Fall' : 'Winter';
+                            const season = month >= 3 && month <= 5 ? 'Spring' : month >= 6 && month <= 8 ? 'Summer' : month >= 9 && month <= 11 ? 'Autumn' : 'Winter';
                             return seasonYearColorScale(`${season}-${year}`);
                         })
                         .style("opacity", 0.5);
