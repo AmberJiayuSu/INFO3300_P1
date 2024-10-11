@@ -14,8 +14,11 @@
         }
 
         body {
+            width: 90%;
             font-family: 'Open Sans', sans-serif;
             font-weight: 300;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .axis-label {
@@ -53,6 +56,16 @@
 
 <body>
     <div class="chart-grid">
+        <div class="temp-container"> 
+            <svg id="sanfrancisco_temp" height="250" width="500" ></svg>
+        </div>
+        <div  class="temp-container">
+            <svg id="nyc_temp" height="250" width="500" ></svg>
+        </div>
+        <div  class="temp-container">
+            <svg id="miami_temp" height="250" width="500" ></svg>
+        </div>
+        
         <svg id="sanfrancisco_humidity" class="humidity-container"> </svg>
         <svg id="nyc_humidity" class="humidity-container"> </svg>
         <svg id="miami_humidity" class="humidity-container"> </svg>
@@ -61,10 +74,108 @@
         <div id="nyc_scatter" class="scatter-container"></div>
         <div id="miami_scatter" class="scatter-container"></div>
 
-        <div id="sanfrancisco_temp" class="temp-container"></div>
-        <div id="nyc_temp" class="temp-container"></div>
-        <div id="miami_temp" class="temp-container"></div>
+        
     </div>
+
+    <script id="globalConst">
+        const miami = "./miami_post1980.csv";
+        const sf = "./sf_post1980.csv";
+        const nyc = "./nyc_post1980.csv";
+    </script>
+
+    <script id = "heatmap">
+        let svg_temp_sf = d3.select("#sanfrancisco_temp");
+        let svg_temp_nyc = d3.select("#nyc_temp"); 
+        let svg_temp_miami = d3.select("#miami_temp");
+        
+        const cities = [
+                { name: 'San Francisco', file: sf, svg: '#sanfrancisco_temp' },
+                { name: 'New York City', file: nyc, svg: '#nyc_temp' },
+                { name: 'Miami', file: miami, svg: '#miami_temp' }
+        ];
+
+        const margins = { top: 20, right: 20, bottom: 25, left: 45 };
+        const width = 500;
+        const height = 250;
+        const chartWidth = width - margins.left - margins.right;
+        const chartHeight = height - margins.top - margins.bottom;
+        const tempExtent = [0,20,40,60,100]; 
+        const yearExtent = [1980, 2015]; 
+
+        const rectWidth = chartWidth / 365;
+        const rectHeight = chartHeight / (yearExtent[1] - yearExtent[0] + 1) + 0.5;
+
+        const rectHorOffset =rectWidth/2;
+        const rectVerOffset = rectHeight/2;
+
+        let yearScale = d3.scaleLinear()
+            .domain(yearExtent)
+            .range([0, chartHeight]);
+
+        let dayScale = d3.scaleLinear()
+            .domain([1,365])
+            .range([0, chartWidth]);
+
+        const monthOffset = chartWidth / 12;
+
+        let monthScale = d3.scaleLinear()
+            .domain([1, 12])
+            .range([0, chartWidth - monthOffset]);
+
+        
+
+        let colorScale = d3.scaleSequential().domain([100,0]).interpolator(d3.interpolateRdYlBu);
+        
+
+        const heatmap = async function(city){
+            const data = await d3.csv(city.file,d3.autoType);
+            
+
+            const heatmapsvg = d3.select(city.svg);
+            let annotations = heatmapsvg.append("g").attr("id","annotations");
+
+            let leftAxis = d3.axisLeft(yearScale).tickFormat(d3.format("d"));
+
+            annotations.append("g")
+                        .attr("class", "heatmap y axis")
+                        .attr("transform",`translate(${margins.left-5},${margins.top -  rectHeight/2})`)
+                        .call(leftAxis)
+                        .select(".domain")  
+                        .attr("display", "none");
+
+            let bottomAxis = d3.axisBottom(monthScale);
+
+            annotations.append("g")
+                        .attr("class", "heatmap x axis")
+                        .attr("transform",`translate(${margins.left + monthOffset/2},${margins.top + chartHeight + 5})`)
+                        .call(bottomAxis)
+                        .select(".domain")  
+                        .attr("display", "none");
+
+            let chartArea = heatmapsvg.append('g')
+                            .attr("transform",`translate(${margins.left},${margins.top})`);
+            
+            chartArea.selectAll("rect").data(data)
+                .join("rect")
+                .attr("x", d =>dayScale(d.Day))
+                .attr("y", d => yearScale(d.Year) - rectHeight)
+                .attr("width", rectWidth)
+                .attr("height", rectHeight)
+                .attr("fill", d => colorScale(d['Mean.TemperatureF']));     
+                
+            console.log(data[0].Day);
+        }
+
+        heatmap(cities[0]);
+        heatmap(cities[1]);
+        heatmap(cities[2]);
+        
+    </script>
+
+
+
+
+
 
     <script id="humidity">
         (function () {
