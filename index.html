@@ -79,6 +79,21 @@
                 <svg id="miami_temp" height="250" width="500" ></svg>
                 <svg id="miami_temp_avg" height="200" width="500" ></svg>
             </div>
+
+            <div class="humidity-container"> 
+                <svg id="sanfrancisco_humidity" height="250" width="500" ></svg>
+                <svg id="sanfrancisco_humidity_avg" height="200" width="500"  ></svg>
+            </div>
+            <div  class="humidity-container">
+                <svg id="nyc_humidity" height="250" width="500" ></svg>
+                <svg id="nyc_humidity_avg" height="200" width="500" ></svg>
+            </div>
+            <div  class="humidity-container">
+                <svg id="miami_humidity" height="250" width="500" ></svg>
+                <svg id="miami_humidity_avg" height="200" width="500" ></svg>
+            </div>
+
+            
        
         
         
@@ -286,135 +301,166 @@
 
 
     <script id="humidity">
+       (function () {
+        let svg_humid_sf = d3.select("#sanfrancisco_humidity");
+        let svg_humid_nyc = d3.select("#nyc_humidity"); 
+        let svg_humid_miami = d3.select("#miami_humidity");
+        
+        const cities = [
+                { name: 'San Francisco', file: sf, svg: '#sanfrancisco_humidity' },
+                { name: 'New York City', file: nyc, svg: '#nyc_humidity' },
+                { name: 'Miami', file: miami, svg: '#miami_humidity' }
+        ];
+
+        const margins = { top: 20, right: 20, bottom: 25, left: 45 };
+        const width = 500;
+        const height = 250;
+        const chartWidth = width - margins.left - margins.right;
+        const chartHeight = height - margins.top - margins.bottom;
+        
+        const yearExtent = [1980, 2015]; 
+
+        let colorScale_humid = d3.scaleSequential().domain([30,100]).interpolator(d3.interpolateBlues);
+
+        const humidmap = async function(city){
+            const data = await d3.csv(city.file,d3.autoType);
+            
+
+            const humidmapsvg = d3.select(city.svg);
+            let annotations = humidmapsvg.append("g").attr("id","annotations");
+
+            let leftAxis = d3.axisLeft(yearScale).tickFormat(d3.format("d"));
+
+            annotations.append("g")
+                        .attr("class", "humidmap y axis")
+                        .attr("transform",`translate(${margins.left-5},${margins.top -  rectHeight/2})`)
+                        .call(leftAxis)
+                        .select(".domain")  
+                        .attr("display", "none");
+
+            let bottomAxis = d3.axisBottom(monthScale);
+
+            annotations.append("g")
+                        .attr("class", "humidmap x axis")
+                        .attr("transform",`translate(${margins.left + monthOffset/2},${margins.top + chartHeight + 5})`)
+                        .call(bottomAxis)
+                        .select(".domain")  
+                        .attr("display", "none");
+
+            let chartArea = humidmapsvg.append('g')
+                            .attr("transform",`translate(${margins.left},${margins.top})`);
+            
+            chartArea.selectAll("rect").data(data)
+                .join("rect")
+                .attr("x", d =>dayScale(d.Day))
+                .attr("y", d => yearScale(d.Year) - rectHeight)
+                .attr("width", rectWidth)
+                .attr("height", rectHeight)
+                .attr("fill", d => colorScale_humid(d['Mean.Humidity']));     
+                
+            console.log(data[0].Day);
+        }
+
+        humidmap(cities[0]);
+        humidmap(cities[1]);
+        humidmap(cities[2]);
+    })();
+
+
+    </script>
+    
+    <script id = "humidity_linemap">
         (function () {
+        const humidExtent = [100, 0]; 
+        let svg_humidity_sf_avg = d3.select("#sanfrancisco_humidity_avg");
+        let svg_humidity_nyc_avg = d3.select("#nyc_humidity_avg"); 
+        let svg_humidity_miami_avg = d3.select("#miami_humidity_avg");
 
-            const margins = { top: 20, right: 20, bottom: 20, left: 40 };
-            const width = 500;
-            const height = 250;
-            const chartWidth = width - margins.left - margins.right;
-            const chartHeight = height - margins.top - margins.bottom;
+        const margins_2 = { top: 20, right: 20, bottom: 25, left: 45 };
+        const width_2 = 500;
+        const height_2 = 200;
+        const chartWidth_2 = width_2 - margins_2.left - margins_2.right;
+        const chartHeight_2 = height_2 - margins_2.top - margins_2.bottom;
 
-            const cities = [
-                { name: 'San Francisco', file: 'sanfrancisco.csv', container: '#sanfrancisco_humidity' },
-                { name: 'New York City', file: 'nyc.csv', container: '#nyc_humidity' },
-                { name: 'Miami', file: 'miami.csv', container: '#miami_humidity' }
-            ];
+        
+        const linechart = async function(svg, cityname){
+            let annotations = svg.append("g").attr("id","annotations_line");
 
-            function daysInYear(a) {
-                let month = a.getMonth();
-                let day = 0;
-                if (month === 1) {
-                    day = a.getD
-                }
-            }
+            let humidityScale = d3.scaleLinear()
+                .domain(humidExtent)
+                .range([0,chartHeight_2]);
 
-            function visualizeCityData(city) {
-                d3.csv(city.file).then((data) => {
-                    const parsedDate = d3.timeParse("%Y-%m-%d");
+            let leftAxis = d3.axisLeft(humidityScale).ticks(5).tickFormat(d3.format("d"));
 
-                    const svg = d3.select(city.container).append("svg")
-                        .attr("width", width + margins.left + margins.right)
-                        .attr("height", height + margins.top + margins.bottom)
-                        .append("g")
-                        .attr("transform", `translate(${margins.left},${margins.top})`);
+            let leftGridlines = d3.axisLeft(humidityScale).ticks(5)
+                            .tickSize(-chartWidth_2)
+                            .tickFormat("");
 
-                    const HumidityExtent = d3.extent(data, d => Number(d['Mean.Humidity']));
-                    const HumidityScale = d3.scaleSequential()
-                        .domain(HumidityExtent)
-                        .range([0, 1])
-                        .interpolator(d3.interpolateBlues);
+            annotations.append("g")
+                        .attr("class", "linear y axis")
+                        .attr("transform",`translate(${margins_2.left-5},${margins_2.top})`)
+                        .call(leftAxis)
+                        .select(".domain")  
+                        .attr("display", "none");
 
-                    const dayScale = d3.scaleLinear()
-                        .domain([0, 366])
-                        .range([0, chartWidth]);
+            annotations.append("g")
+                .attr("class", "gridlines")
+                .attr("transform",`translate(${margins_2.left },${margins_2.top})`)
+                .call(leftGridlines);
 
-                    const Xmonth = d3.extent(data, d => Number(d['Date'].substring(5, 7)));
-                    const XmonthScale = d3.scaleLinear()
-                        .domain(Xmonth)
-                        .range([0, chartWidth]);
+            let bottomAxis = d3.axisBottom(monthScale);
 
-                    const Yyear = d3.extent(data, d => Number(d['Date'].substring(0, 4)));
-                    const YyearScale = d3.scaleLinear()
-                        .domain(Yyear)
-                        .range([chartHeight, 0]);
+            annotations.append("g")
+                        .attr("class", "linear x axis")
+                        .attr("transform",`translate(${margins_2.left + monthOffset/2},${margins_2.top + chartHeight_2 + 5})`)
+                        .call(bottomAxis)
+                        .select(".domain")  
+                        .attr("display", "none");
 
+            const data = await d3.csv('./yearlyAverage.csv',d3.autoType);
 
+            const citydata = data.filter(d => d.city === cityname);
 
-                    console.log(XmonthScale.domain());
-                    console.log(HumidityExtent);
+            const area = d3.area()
+                .x(d => monthScale(d.Month) + monthOffset/2)          
+                .y0(d => humidityScale(d.Min_Humidity_All_Years))       
+                .y1(d => humidityScale(d.Max_Humidity_All_Years)); 
 
+            const lineGen = d3.line() 
+                .x(d => monthScale(d.Month) + monthOffset/2)
+                .y(d => humidityScale(d.Mean_Humidity_All_Years));
 
+            let chartArea = svg.append('g')
+                            .attr("transform",`translate(${margins_2.left},${margins_2.top})`);
+            
 
-                    //Axes
-                    let bottomMonthAxis = d3.axisBottom(XmonthScale);
-                    console.log(bottomMonthAxis);
-                    svg.append("g")
-                        .attr("transform", `translate(${margins.left},${margins.top + chartHeight})`)
-                        .call(bottomMonthAxis);
+            chartArea.append("path")
+                .attr("d", area(citydata))
+                .attr("fill", "lightblue")
+                .attr('opacity',0.5);
 
-                    let bottomGridlines = d3.axisBottom(XmonthScale).tickFormat("").tickSize(-chartHeight - 10);
-                    svg.append("g")
-                        .attr("class", "gridlines")
-                        .attr("transform", `translate(${margins.left},${margins.top + chartHeight + 10})`)
-                        .call(bottomGridlines);
+            chartArea.append("path")
+                .datum(citydata) 
+                .attr("fill","none")
+                .attr("stroke","royalblue")
+                .attr("stroke-width","1.5")
+                .attr("d", d => lineGen(d));
 
-                    let YyearAxis = d3.axisLeft(YyearScale);
-                    svg.append("g")
-                        .attr("transform", `translate(${margins.left},${margins.top})`)
-                        .call(YyearAxis);
-                    let YyearAxisGridLines = d3.axisLeft(YyearScale).tickFormat('').tickSize(-chartWidth - 10);
-                    svg.append("g")
-                        .attr("class", "gridlines")
-                        .attr("transform", `translate(${margins.left - 10},${margins.top})`)
-                        .call(YyearAxisGridLines);
-
-                    let charArea = svg.append('g')
-                        .attr('transform', `translate(${margins.left},${margins.top})`);
-
-                    //Circles!
-                    let dayRN = 0;
-                    let yrOfPrev = data[0]['Date'].substring(0, 4);
-                    console.log(yrOfPrev);
-                    data.forEach((d) => {
-                        const date = parsedDate(d['Date']); // Parse the date string
-                        const currYr = date.getFullYear(); // Get the year
-                        const currDayOfYear = d3.timeDay.count(d3.timeYear(date), date);
-                        // dayRN = currDayOfYear;
-                        //console.log(dayRN);
-
-                        //let currYr=Number(d.Date.substring(0,4));
-
-                        // if(yrOfPrev===currYr){
-                        //     dayRN+=1;
-                        //     prevYr=currYr;
-                        //     //console.log(yrOfPrev+"   "+currYr);
-                        // }
-                        // if(yrOfPrev!=currYr){
-                        //     dayRN=1;
-                        //     prevYr=currYr;
-                        //     //console.log(yrOfPrev+" newyear  "+currYr);
-                        // }
-                        // dayRN+=1;
-                        // prevYr+=1;
-                        // //console.log(dayRN);
-
-                        //let currDay=Number(parseDate(d['Date']));
-                        let currHumidity = d['Mean.Humidity'];
-
-                        charArea.append('circle')
-                            .attr('r', 3)
-                            .attr('cx', d => dayScale(currDayOfYear))
-                            .attr('cy', d => YyearScale(currYr))
-                            .style("fill", HumidityScale(currHumidity))
-
-                    });
-                })
-            }
-            cities.forEach(city => visualizeCityData(city));
-        })();
+            chartArea.selectAll('circle').data(citydata)
+                .join("circle")
+                .attr("cx", d =>monthScale(d.Month) + monthOffset/2 )
+                .attr("cy", d => humidityScale(d.Mean_Humidity_All_Years))
+                .attr("r", 3)
+                .attr("fill", 'royalblue');    
 
 
+        }
 
+
+        linechart(svg_humidity_sf_avg,'SF');
+        linechart(svg_humidity_nyc_avg,'NYC');
+        linechart(svg_humidity_miami_avg,'Miami');
+    }());
     </script>
 
     <script id="scatter">
