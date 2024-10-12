@@ -183,7 +183,7 @@
             { name: 'Miami', file: miami, svg: '#miami_temp' }
         ];
 
-        const margins_1 = { top: 20, right: 20, bottom: 25, left: 45 };
+        const margins_1 = { top: 20, right: 20, bottom: 45, left: 55 };
         const width_1 = 500;
         const height_1 = 250;
         const chartWidth_1 = width_1 - margins_1.left - margins_1.right;
@@ -252,6 +252,23 @@
                 .attr("width", rectWidth)
                 .attr("height", rectHeight)
                 .attr("fill", d => colorScale(d['Mean.TemperatureF']));
+
+            annotations.append("text")
+                    .attr("x", -chartHeight_1/2 - margins_1.top)
+                    .attr("y", 0)
+                    .attr("dominant-baseline", "hanging")
+                    .attr("text-anchor", "middle")
+                    .attr("transform", "rotate(-90)")
+                    .style("font-size", "11px")
+                    .text("Year");
+
+            annotations.append("text")
+                    .attr("x", width_1/2)
+                    .attr("y", chartHeight_1 + margins_1.top + margins_1.bottom/2 + 5)
+                    .attr("dominant-baseline", "hanging")
+                    .attr("text-anchor", "middle")
+                    .style("font-size", "11px")
+                    .text("Month");
 
 
         }
@@ -354,8 +371,10 @@
             .attr("y", legend_margin_linear.top)
             .attr("dominant-baseline", "middle")
             .style("text-anchor", "start")
-            .style("font-size", "12px")
+            .style("font-size", "11px")
             .text("Monthly Mean Temp Range(F)"); 
+
+    
 
     }
 
@@ -370,7 +389,7 @@
         let svg_temp_nyc_avg = d3.select("#nyc_temp_avg");
         let svg_temp_miami_avg = d3.select("#miami_temp_avg");
 
-        const margins_2 = { top: 20, right: 20, bottom: 25, left: 45 };
+        const margins_2 = { top: 20, right: 20, bottom: 45, left: 55 };
         const width_2 = 500;
         const height_2 = 200;
         const chartWidth_2 = width_2 - margins_2.left - margins_2.right;
@@ -447,7 +466,23 @@
                 .attr("r", 3)
                 .attr("fill", 'rosybrown');
 
+            annotations.append("text")
+                    .attr("x", -chartHeight_2/2 - margins_2.top)
+                    .attr("y", 0)
+                    .attr("dominant-baseline", "hanging")
+                    .attr("text-anchor", "middle")
+                    .attr("transform", "rotate(-90)")
+                    .style("font-size", "11px")
+                    .text("Temperature(F)");
 
+            annotations.append("text")
+                    .attr("x", width_2/2)
+                    .attr("y", chartHeight_2 + margins_2.top + margins_2.bottom/2 + 5)
+                    .attr("dominant-baseline", "hanging")
+                    .attr("text-anchor", "middle")
+                    .style("font-size", "11px")
+                    .text("Month");
+            
         }
 
 
@@ -481,7 +516,7 @@
                 { name: 'Miami', file: miami, svg: '#miami_humidity' }
             ];
 
-            const margins = { top: 20, right: 20, bottom: 25, left: 45 };
+            const margins = { top: 20, right: 20, bottom: 45, left: 55 };
             const width = 500;
             const height = 250;
             const chartWidth = width - margins.left - margins.right;
@@ -527,7 +562,22 @@
                     .attr("height", rectHeight)
                     .attr("fill", d => colorScale_humid(d['Mean.Humidity']));
 
-                console.log(data[0].Day);
+                annotations.append("text")
+                    .attr("x", -chartHeight_1/2 - margins_1.top)
+                    .attr("y", 0)
+                    .attr("dominant-baseline", "hanging")
+                    .attr("text-anchor", "middle")
+                    .attr("transform", "rotate(-90)")
+                    .style("font-size", "11px")
+                    .text("Year");
+
+                annotations.append("text")
+                    .attr("x", width_1/2)
+                    .attr("y", chartHeight_1 + margins_1.top + margins_1.bottom/2 + 5)
+                    .attr("dominant-baseline", "hanging")
+                    .attr("text-anchor", "middle")
+                    .style("font-size", "11px")
+                    .text("Month");
             }
 
             humidmap(cities[0]);
@@ -545,7 +595,7 @@
             let svg_humidity_nyc_avg = d3.select("#nyc_humidity_avg");
             let svg_humidity_miami_avg = d3.select("#miami_humidity_avg");
 
-            const margins_2 = { top: 20, right: 20, bottom: 25, left: 45 };
+            const margins_2 = { top: 20, right: 20, bottom: 45, left: 55 };
             const width_2 = 500;
             const height_2 = 200;
             const chartWidth_2 = width_2 - margins_2.left - margins_2.right;
@@ -621,6 +671,23 @@
                     .attr("cy", d => humidityScale(d.Mean_Humidity_All_Years))
                     .attr("r", 3)
                     .attr("fill", 'royalblue');
+
+                annotations.append("text")
+                    .attr("x", -chartHeight_2/2 - margins_2.top)
+                    .attr("y", 0)
+                    .attr("dominant-baseline", "hanging")
+                    .attr("text-anchor", "middle")
+                    .attr("transform", "rotate(-90)")
+                    .style("font-size", "11px")
+                    .text("Humidity(%)");
+
+                annotations.append("text")
+                    .attr("x", width_2/2)
+                    .attr("y", chartHeight_2 + margins_2.top + margins_2.bottom/2 + 5)
+                    .attr("dominant-baseline", "hanging")
+                    .attr("text-anchor", "middle")
+                    .style("font-size", "11px")
+                    .text("Month");
             }
 
 
