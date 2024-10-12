@@ -95,6 +95,12 @@
             height: 100px;
             margin-bottom: 80px;
         }
+
+        .humid-legend-container {
+            width: 500px;
+            height: 100px;
+            margin-bottom: 80px;
+        }
     </style>
 </head>
 
@@ -128,7 +134,7 @@
             </div>
             <svg id="scatter-legend" class="scatter-legend-container"></svg>
             <svg id="heatmap-legend" class="heatmap-legend-container"></svg>
-            <svg id="scatter-legend" class="scatter-legend-container"></svg>
+            <svg id="humid-legend" class="humid-legend-container"></svg>
         </div>
 
         <div class="chart-title">New York City</div>
@@ -144,7 +150,7 @@
             </div>
             <svg id="scatter-legend" class="scatter-legend-container"></svg>
             <svg id="heatmap-legend" class="heatmap-legend-container"></svg>
-            <svg id="scatter-legend" class="scatter-legend-container"></svg>
+            <svg id="humid-legend" class="humid-legend-container"></svg>
         </div>
 
         <div class="chart-title">Miami</div>
@@ -160,7 +166,7 @@
             </div>
             <svg id="scatter-legend" class="scatter-legend-container"></svg>
             <svg id="heatmap-legend" class="heatmap-legend-container"></svg>
-            <svg id="scatter-legend" class="scatter-legend-container"></svg>
+            <svg id="humid-legend" class="humid-legend-container"></svg>
         </div>
 
     </div>
@@ -275,111 +281,114 @@
 
         cities.forEach(city => heatmap(city));
 
-        const step = 100/9;
+        const step = 100 / 9;
         const colorValues = d3.range(tempExtent[1], tempExtent[0] + step, step);
         const legendData = colorValues.map(key => ({
-                key,
-                color: colorScale(key)
+            key,
+            color: colorScale(key)
         }));
 
-        const legend_svg= d3.selectAll("#heatmap-legend")
+        const legend_svg = d3.selectAll("#heatmap-legend")
 
         const legend_margin = { top: 18, right: 40, bottom: 70, left: 40 };
 
         const legend_margin_linear = { top: 65, right: 40, bottom: 15, left: 40 };
 
 
-        const drawLegendheatmap = function(svg,data,innerGap){
+        const drawLegendheatmap = function (svg, data, innerGap) {
 
-            
-        const legend_width_overall = 500;
-        const legend_height_overall = 100;
-        const legendWidth = legend_width_overall - legend_margin.left - legend_margin.right;
-        const legendHeight = legend_height_overall - legend_margin.top - legend_margin.bottom;
-        const arrayLength = data.length;
 
-        let chartArea = svg.append('g')
-            .attr("transform", `translate(${legend_margin.left},${legend_margin.top})`);
+            const legend_width_overall = 500;
+            const legend_height_overall = 100;
+            const legendWidth = legend_width_overall - legend_margin.left - legend_margin.right;
+            const legendHeight = legend_height_overall - legend_margin.top - legend_margin.bottom;
+            const arrayLength = data.length;
 
-        const rectWidth = [legendWidth - (innerGap * (arrayLength - 1))] / arrayLength;
-        const rectHeight = legendHeight;
+            let chartArea = svg.append('g')
+                .attr("transform", `translate(${legend_margin.left},${legend_margin.top})`);
 
-        console.log(legendWidth);
-        chartArea.selectAll("rect").data(data)
-            .join("rect")
-            .attr("x", (d,i) => i * (rectWidth + innerGap))
-            .attr("y", (d,i) => 0)
-            .attr("width", rectWidth)
-            .attr("height", rectHeight)
-            .attr("fill", d => d.color);
+            const rectWidth = [legendWidth - (innerGap * (arrayLength - 1))] / arrayLength;
+            const rectHeight = legendHeight;
 
-        chartArea.selectAll("text").data(data)
+            console.log(legendWidth);
+            chartArea.selectAll("rect").data(data)
+                .join("rect")
+                .attr("x", (d, i) => i * (rectWidth + innerGap))
+                .attr("y", (d, i) => 0)
+                .attr("width", rectWidth)
+                .attr("height", rectHeight)
+                .attr("fill", d => d.color);
+
+            chartArea.selectAll("text").data(data)
                 .join("text")
-                .attr("x", (d,i) => i * (rectWidth + innerGap) + rectWidth/2)
+                .attr("x", (d, i) => i * (rectWidth + innerGap) + rectWidth / 2)
                 .attr("y", rectHeight + 5)
                 .attr("dominant-baseline", "hanging")
                 .style("text-anchor", "middle")
                 .style("font-size", "10px")
-                .text(d =>  Math.round(d.key));
+                .text(d => Math.round(d.key));
 
-        let firstLabelName = svg.append('g');
-        
-        firstLabelName.append("text")
-                    .attr("x", legend_width_overall/2)
-                    .attr("y", 0)
-                    .attr("dominant-baseline", "hanging")
-                    .style("text-anchor", "middle")
-                    .style("font-size", "12px")
-                    .text("Daily Mean Temperature (F)");          
-    }
+            let firstLabelName = svg.append('g');
 
-    const drawLinearLegend = function(svg){
-        const legend_width_overall = svg.attr("width");
-        const legend_height_overall = svg.attr("height");
-        const legendWidth = legend_width_overall - legend_margin_linear.left - legend_margin_linear.right;
-        const legendHeight = legend_height_overall - legend_margin_linear.top - legend_margin_linear.bottom;
+            firstLabelName.append("text")
+                .attr("x", legend_width_overall / 2)
+                .attr("y", 0)
+                .attr("dominant-baseline", "hanging")
+                .style("text-anchor", "middle")
+                .style("font-size", "12px")
+                .text("Daily Mean Temperature (F)");
+        }
 
-        let chartArea = svg.append('g');
+        const drawLinearLegend = function (svg) {
+            const legend_width_overall = svg.attr("width");
+            const legend_height_overall = svg.attr("height");
+            const legendWidth = legend_width_overall - legend_margin_linear.left - legend_margin_linear.right;
+            const legendHeight = legend_height_overall - legend_margin_linear.top - legend_margin_linear.bottom;
 
-        chartArea.append('path').attr("d",`M ${legend_margin_linear.left},${legend_margin_linear.top} H 80`)
-            .style("stroke","rosybrown")
-            .style("stroke-width",1.5);
-        chartArea.append('circle')
-            .attr("cx", legend_margin_linear.left + 20)
-            .attr("cy", legend_margin_linear.top)
-            .attr("r", 3)
-            .attr("fill", 'rosybrown');
+            let chartArea = svg.append('g');
 
-        chartArea.append("text")
-            .attr("x", 85)
-            .attr("y", legend_margin_linear.top)
-            .attr("dominant-baseline", "middle")
-            .style("text-anchor", "start")
-            .style("font-size", "12px")
-            .text("Monthly Mean Temp(F)"); 
+            chartArea.append('path').attr("d", `M ${legend_margin_linear.left},${legend_margin_linear.top} H 80`)
+                .style("stroke", "rosybrown")
+                .style("stroke-width", 1.5);
+            chartArea.append('circle')
+                .attr("cx", legend_margin_linear.left + 20)
+                .attr("cy", legend_margin_linear.top)
+                .attr("r", 3)
+                .attr("fill", 'rosybrown');
 
-        chartArea.append('rect')
-            .attr("x", 240)
-            .attr("y", legend_margin_linear.top - 10)
-            .attr("width", 50)
-            .attr("height", 20)
-            .attr("fill", "linen")
-            .attr('opacity', 0.8);
+            chartArea.append("text")
+                .attr("x", 85)
+                .attr("y", legend_margin_linear.top)
+                .attr("dominant-baseline", "middle")
+                .style("text-anchor", "start")
+                .style("font-size", "12px")
+                .text("Monthly Mean Temp(F)");
 
-        chartArea.append("text")
-            .attr("x", 295)
-            .attr("y", legend_margin_linear.top)
-            .attr("dominant-baseline", "middle")
-            .style("text-anchor", "start")
-            .style("font-size", "11px")
-            .text("Monthly Mean Temp Range(F)"); 
+            chartArea.append("text")
+                .attr("x", 295)
+                .attr("y", legend_margin_linear.top)
+                .attr("dominant-baseline", "middle")
+                .style("text-anchor", "start")
+                .style("font-size", "11px")
+                .text("Monthly Mean Temp Range(F)"); 
+
+            chartArea.append('rect')
+                .attr("x", 240)
+                .attr("y", legend_margin_linear.top - 10)
+                .attr("width", 50)
+                .attr("height", 20)
+                .attr("fill", "linen")
+                .attr('opacity', 0.8);
+
 
     
 
     }
 
-    drawLegendheatmap(legend_svg,legendData,5);
-    drawLinearLegend(legend_svg);
+        
+
+        drawLegendheatmap(legend_svg, legendData, 5);
+        drawLinearLegend(legend_svg);
 
     </script>
 
@@ -492,11 +501,11 @@
         linechart(svg_temp_nyc_avg, 'NYC');
         linechart(svg_temp_miami_avg, 'Miami');
 
-        
 
 
 
-  
+
+
 
     </script>
 
@@ -516,7 +525,8 @@
                 { name: 'Miami', file: miami, svg: '#miami_humidity' }
             ];
 
-            const margins = { top: 20, right: 20, bottom: 45, left: 55 };
+            const humidExtent = [100, 0];
+            const margins = { top: 20, right: 20, bottom: 25, left: 45 };
             const width = 500;
             const height = 250;
             const chartWidth = width - margins.left - margins.right;
@@ -583,6 +593,113 @@
             humidmap(cities[0]);
             humidmap(cities[1]);
             humidmap(cities[2]);
+
+
+            const step = 100 / 9;
+            const colorValues = d3.range(humidExtent[1], humidExtent[0] + step, step);
+            const legendData = colorValues.map(key => ({
+                key,
+                color: colorScale_humid(key)
+            }));
+
+            const legend_svg = d3.selectAll("#humid-legend")
+
+            const legend_margin = { top: 18, right: 40, bottom: 70, left: 40 };
+
+            const legend_margin_linear = { top: 65, right: 40, bottom: 15, left: 40 };
+
+
+            const drawLegendheatmap = function (svg, data, innerGap) {
+
+
+                const legend_width_overall = 500;
+                const legend_height_overall = 100;
+                const legendWidth = legend_width_overall - legend_margin.left - legend_margin.right;
+                const legendHeight = legend_height_overall - legend_margin.top - legend_margin.bottom;
+                const arrayLength = data.length;
+
+                let chartArea = svg.append('g')
+                    .attr("transform", `translate(${legend_margin.left},${legend_margin.top})`);
+
+                const rectWidth = [legendWidth - (innerGap * (arrayLength - 1))] / arrayLength;
+                const rectHeight = legendHeight;
+
+                console.log(legendWidth);
+                chartArea.selectAll("rect").data(data)
+                    .join("rect")
+                    .attr("x", (d, i) => i * (rectWidth + innerGap))
+                    .attr("y", (d, i) => 0)
+                    .attr("width", rectWidth)
+                    .attr("height", rectHeight)
+                    .attr("fill", d => d.color);
+
+                chartArea.selectAll("text").data(data)
+                    .join("text")
+                    .attr("x", (d, i) => i * (rectWidth + innerGap) + rectWidth / 2)
+                    .attr("y", rectHeight + 5)
+                    .attr("dominant-baseline", "hanging")
+                    .style("text-anchor", "middle")
+                    .style("font-size", "10px")
+                    .text(d => Math.round(d.key));
+
+                let firstLabelName = svg.append('g');
+
+                firstLabelName.append("text")
+                    .attr("x", legend_width_overall / 2)
+                    .attr("y", 0)
+                    .attr("dominant-baseline", "hanging")
+                    .style("text-anchor", "middle")
+                    .style("font-size", "12px")
+                    .text("Daily Mean Humidity(%)");
+            }
+
+            const drawLinearLegend = function (svg) {
+                const legend_width_overall = svg.attr("width");
+                const legend_height_overall = svg.attr("height");
+                const legendWidth = legend_width_overall - legend_margin_linear.left - legend_margin_linear.right;
+                const legendHeight = legend_height_overall - legend_margin_linear.top - legend_margin_linear.bottom;
+
+                let chartArea = svg.append('g');
+
+                chartArea.append('path').attr("d", `M ${legend_margin_linear.left},${legend_margin_linear.top} H 80`)
+                    .style("stroke", "royalblue")
+                    .style("stroke-width", 1.5);
+                chartArea.append('circle')
+                    .attr("cx", legend_margin_linear.left + 20)
+                    .attr("cy", legend_margin_linear.top)
+                    .attr("r", 3)
+                    .attr("fill", 'royalblue');
+
+                chartArea.append("text")
+                    .attr("x", 85)
+                    .attr("y", legend_margin_linear.top)
+                    .attr("dominant-baseline", "middle")
+                    .style("text-anchor", "start")
+                    .style("font-size", "12px")
+                    .text("Monthly Mean Humidity(%)");
+
+                chartArea.append('rect')
+                    .attr("x", 240)
+                    .attr("y", legend_margin_linear.top - 10)
+                    .attr("width", 50)
+                    .attr("height", 20)
+                    .attr("fill", "lightblue")
+                    .attr('opacity', 0.8);
+
+                chartArea.append("text")
+                    .attr("x", 295)
+                    .attr("y", legend_margin_linear.top)
+                    .attr("dominant-baseline", "middle")
+                    .style("text-anchor", "start")
+                    .style("font-size", "12px")
+                    .text("Monthly Mean Humidity Range(%)");
+
+            }
+
+            drawLegendheatmap(legend_svg, legendData, 5);
+            drawLinearLegend(legend_svg);
+
+
         })();
 
 
@@ -651,7 +768,6 @@
 
                 let chartArea = svg.append('g')
                     .attr("transform", `translate(${margins_2.left},${margins_2.top})`);
-
 
                 chartArea.append("path")
                     .attr("d", area(citydata))
