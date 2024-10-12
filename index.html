@@ -27,7 +27,7 @@
         }
 
         .axis-label {
-            font-size: 10px;
+            font-size: 14px;
             font-weight: 300;
         }
 
@@ -69,9 +69,8 @@
 <body>
     <h1>Project 1: US Weather Analysis</h1>
     <p id="member">Amber Su, Chi Zhang, Kewei Xu</p>
-    <p id="description">This project aims to visualize the <b>weather change</b> of three cities: New York City, San
-        Francisco,
-        and Miami. By examining temperature and humidity trends from 1980-2015, the visualization seeks to explore the
+    <p id="description">This project aims to visualize the <b>weather change</b> of three cities:San
+        Francisco,New York City,and Miami. By examining temperature and humidity trends from 1980-2015, the visualization seeks to explore the
         chronological weather changes across different climate zones and identify potential relationships between
         temperature and humidity, as well as their distinct patterns of variation.</p>
 
@@ -579,23 +578,23 @@
 
                     svg.append("text")
                         .attr("x", 50)
-                        .attr("y", y(comfortableHumidity) - 10)
+                        .attr("y", y(comfortableHumidity) - 5)
                         .attr("text-anchor", "middle")
                         .style("font-size", "10px")
                         .text("Comfortable Humidity");
 
                     svg.append("text")
                         .attr("text-anchor", "end")
-                        .attr("x", width / 2 + 60)
-                        .attr("y", height + margin.top)
+                        .attr("x", width / 2 + 70)
+                        .attr("y", height + margin.top +5)
                         .attr("class", "axis-label")
                         .text("Mean Temperature (F)");
 
                     svg.append("text")
                         .attr("text-anchor", "end")
                         .attr("transform", "rotate(-90)")
-                        .attr("x", -height / 2 + 20)
-                        .attr("y", -margin.left + 30)
+                        .attr("x", -height / 2 + 30)
+                        .attr("y", -margin.left + 25)
                         .attr("class", "axis-label")
                         .text("Humidity(%)");
 
