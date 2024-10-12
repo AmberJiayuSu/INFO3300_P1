@@ -39,14 +39,23 @@
         .chart-grid {
             display: grid;
             grid-template-columns: auto 1fr;
-            grid-gap: 20px;
-            align-items: start;
+            grid-gap: auto;
+            align-items: center;
         }
 
         .chart-row {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            grid-gap: 20px;
+            grid-gap: auto;
+            justify-items: center;
+            align-items: center;
+        }
+
+        .title-row {
+            text-align: center;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-gap: auto;
         }
 
         .chart-title {
@@ -70,13 +79,17 @@
     <h1>Project 1: US Weather Analysis</h1>
     <p id="member">Amber Su, Chi Zhang, Kewei Xu</p>
     <p id="description">This project aims to visualize the <b>weather change</b> of three cities:San
-        Francisco,New York City,and Miami. By examining temperature and humidity trends from 1980-2015, the visualization seeks to explore the
+        Francisco,New York City,and Miami. By examining temperature and humidity trends from 1980-2015, the
+        visualization seeks to explore the
         chronological weather changes across different climate zones and identify potential relationships between
         temperature and humidity, as well as their distinct patterns of variation.</p>
 
-    <h2 style="display: inline-block; margin-left: 50px; margin-right: 225px;">Temperature - Humidity Scatter Plot</h2>
-    <h2 style="display: inline-block; margin-right: 340px;">Temperature Heatmap</h2>
-    <h2 style="display: inline-block;">Humidity Map</h2>
+
+    <div class="title-row">
+        <h2>Temperature - Humidity Scatter Plot</h2>
+        <h2>Temperature Heatmap</h2>
+        <h2>Humidity Map</h2>
+    </div>
 
     <div class="chart-grid">
         <div class="chart-title">San Francisco</div>
@@ -586,7 +599,7 @@
                     svg.append("text")
                         .attr("text-anchor", "end")
                         .attr("x", width / 2 + 70)
-                        .attr("y", height + margin.top +5)
+                        .attr("y", height + margin.top + 5)
                         .attr("class", "axis-label")
                         .text("Mean Temperature (F)");
 
