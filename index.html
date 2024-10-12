@@ -5,6 +5,14 @@
     <script src="https://d3js.org/d3.v7.min.js"></script>
 
     <style>
+        body {
+            width: 90%;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 300;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
         .gridlines line {
             stroke-width: 0.5;
             stroke: #cecece;
@@ -16,14 +24,6 @@
 
         h2 {
             display: block;
-        }
-
-        body {
-            width: 90%;
-            font-family: 'Open Sans', sans-serif;
-            font-weight: 300;
-            margin-left: auto;
-            margin-right: auto;
         }
 
         .axis-label {
@@ -38,26 +38,27 @@
 
         .chart-grid {
             display: grid;
+            grid-template-columns: auto 1fr;
+            grid-gap: 20px;
+            align-items: start;
+        }
+
+        .chart-row {
+            display: grid;
             grid-template-columns: repeat(3, 1fr);
             grid-gap: 20px;
         }
 
-        .humidity-container {
-            width: 500px;
-            height: 300px;
+        .chart-title {
+            font-size: 24px;
+            font-weight: 600;
+            transform: rotate(-90deg);
+            transform-origin: left center;
+            white-space: nowrap;
+            width: 15px;
+            align-self: center;
         }
 
-        .scatter-container {
-            width: 500px;
-            height: 500px;
-        }
-
-        .temp-container {
-            width: 500px;
-            height: 500px;
-        }
-
-        
         .scatter-legend-container {
             width: 500px;
             height: 100px;
@@ -66,46 +67,67 @@
 </head>
 
 <body>
+    <h1>Project 1: US Weather Analysis</h1>
+    <p id="member">Amber Su, Chi Zhang, Kewei Xu</p>
+    <p id="description">This project aims to visualize the <b>weather change</b> of three cities: New York City, San
+        Francisco,
+        and Miami. By examining temperature and humidity trends from 1980-2015, the visualization seeks to explore the
+        chronological weather changes across different climate zones and identify potential relationships between
+        temperature and humidity, as well as their distinct patterns of variation.</p>
+
+    <h2 style="display: inline-block; margin-left: 50px; margin-right: 225px;">Temperature - Humidity Scatter Plot</h2>
+    <h2 style="display: inline-block; margin-right: 340px;">Temperature Heatmap</h2>
+    <h2 style="display: inline-block;">Humidity Map</h2>
 
     <div class="chart-grid">
-        <div id="sanfrancisco_scatter" class="scatter-container"></div>
-        <div class="temp-container">
-            <svg id="sanfrancisco_temp" height="250" width="500"></svg>
-            <svg id="sanfrancisco_temp_avg" height="200" width="500"></svg>
+        <div class="chart-title">San Francisco</div>
+        <div class="chart-row">
+            <div id="sanfrancisco_scatter" class="scatter-container"></div>
+            <div class="temp-container">
+                <svg id="sanfrancisco_temp" height="250" width="500"></svg>
+                <svg id="sanfrancisco_temp_avg" height="200" width="500"></svg>
+            </div>
+            <div class="humidity-container">
+                <svg id="sanfrancisco_humidity" height="250" width="500"></svg>
+                <svg id="sanfrancisco_humidity_avg" height="200" width="500"></svg>
+            </div>
+            <svg id="scatter-legend" class="scatter-legend-container"></svg>
+            <svg id="scatter-legend" class="scatter-legend-container"></svg>
+            <svg id="scatter-legend" class="scatter-legend-container"></svg>
         </div>
-        <div class="humidity-container">
-            <svg id="sanfrancisco_humidity" height="250" width="500"></svg>
-            <svg id="sanfrancisco_humidity_avg" height="200" width="500"></svg>
-        </div>
-        <svg id="scatter-legend" class="scatter-legend-container"></svg> 
-        <svg id="scatter-legend" class="scatter-legend-container"></svg>       
-        <svg id="scatter-legend" class="scatter-legend-container"></svg> 
 
-        <div id="nyc_scatter" class="scatter-container"></div>
-        <div class="temp-container">
-            <svg id="nyc_temp" height="250" width="500"></svg>
-            <svg id="nyc_temp_avg" height="200" width="500"></svg>
+        <div class="chart-title">New York City</div>
+        <div class="chart-row">
+            <div id="nyc_scatter" class="scatter-container"></div>
+            <div class="temp-container">
+                <svg id="nyc_temp" height="250" width="500"></svg>
+                <svg id="nyc_temp_avg" height="200" width="500"></svg>
+            </div>
+            <div class="humidity-container">
+                <svg id="nyc_humidity" height="250" width="500"></svg>
+                <svg id="nyc_humidity_avg" height="200" width="500"></svg>
+            </div>
+            <svg id="scatter-legend" class="scatter-legend-container"></svg>
+            <svg id="scatter-legend" class="scatter-legend-container"></svg>
+            <svg id="scatter-legend" class="scatter-legend-container"></svg>
         </div>
-        <div class="humidity-container">
-            <svg id="nyc_humidity" height="250" width="500"></svg>
-            <svg id="nyc_humidity_avg" height="200" width="500"></svg>
+
+        <div class="chart-title">Miami</div>
+        <div class="chart-row">
+            <div id="miami_scatter" class="scatter-container"></div>
+            <div class="temp-container">
+                <svg id="miami_temp" height="250" width="500"></svg>
+                <svg id="miami_temp_avg" height="200" width="500"></svg>
+            </div>
+            <div class="humidity-container">
+                <svg id="miami_humidity" height="250" width="500"></svg>
+                <svg id="miami_humidity_avg" height="200" width="500"></svg>
+            </div>
+            <svg id="scatter-legend" class="scatter-legend-container"></svg>
+            <svg id="scatter-legend" class="scatter-legend-container"></svg>
+            <svg id="scatter-legend" class="scatter-legend-container"></svg>
         </div>
-        <svg id="scatter-legend" class="scatter-legend-container"></svg> 
-        <svg id="scatter-legend" class="scatter-legend-container"></svg>       
-        <svg id="scatter-legend" class="scatter-legend-container"></svg> 
-      
-        <div id="miami_scatter" class="scatter-container"></div>
-        <div class="temp-container">
-            <svg id="miami_temp" height="250" width="500"></svg>
-            <svg id="miami_temp_avg" height="200" width="500"></svg>
-        </div>
-        <div class="humidity-container">
-            <svg id="miami_humidity" height="250" width="500"></svg>
-            <svg id="miami_humidity_avg" height="200" width="500"></svg>
-        </div>
-        <svg id="scatter-legend" class="scatter-legend-container"></svg> 
-        <svg id="scatter-legend" class="scatter-legend-container"></svg>       
-        <svg id="scatter-legend" class="scatter-legend-container"></svg> 
+
     </div>
 
 
@@ -537,7 +559,7 @@
                         .attr("stroke-width", 1)
                         .attr("stroke-dasharray", "4");
 
-                        svg.append("text")
+                    svg.append("text")
                         .attr("x", x(comfortableTemperature) + 160)
                         .attr("y", -y(comfortableHumidity) - 30)
                         .attr("text-anchor", "end")
@@ -554,7 +576,7 @@
                         .attr("stroke-width", 1)
                         .attr("stroke-dasharray", "4");
 
-                        
+
                     svg.append("text")
                         .attr("x", 50)
                         .attr("y", y(comfortableHumidity) - 10)
@@ -582,20 +604,20 @@
                         color: seasonYearColorScale(key)
                     }));
 
-                   const legend_svg= d3.selectAll("#scatter-legend")
+                    const legend_svg = d3.selectAll("#scatter-legend")
 
-                    const legend = legend_svg.selectAll(".egend")
+                    const legend = legend_svg.selectAll(".legend")
                         .data(legendData)
                         .enter().append("g")
                         .attr("class", "legend")
                         .attr("transform", (d, i) => {
-                                let x = (i%4)*110;
-                                let y = Math.floor(i/4)*20;
-                                return `translate(${x},${y})`;
+                            let x = (i % 4) * 110;
+                            let y = Math.floor(i / 4) * 20;
+                            return `translate(${x},${y})`;
                         });
 
                     legend.append("rect")
-                        .attr("x",  10)
+                        .attr("x", 10)
                         .attr("width", 16)
                         .attr("height", 16)
                         .style("fill", d => d.color);
