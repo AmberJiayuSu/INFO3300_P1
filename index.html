@@ -47,15 +47,17 @@
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             grid-gap: auto;
-            justify-items: center;
-            align-items: center;
+            justify-items: left;
+            align-items: left;
         }
 
         .title-row {
-            text-align: center;
+            margin-top: 50px;
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             grid-gap: auto;
+            justify-content: center;
+            align-items: center;
         }
 
         .chart-title {
@@ -66,11 +68,25 @@
             white-space: nowrap;
             width: 15px;
             align-self: center;
+            margin-right: 10px;
+        }
+
+        .scatter-container,
+        .temp-container,
+        .humidity-container {
+            display: row;
+            justify-content: left;
+            align-items: left;
+
         }
 
         .scatter-legend-container {
             width: 500px;
             height: 100px;
+            display: row;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
         }
     </style>
 </head>
