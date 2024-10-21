@@ -1,4 +1,4 @@
-# INFO3300_P1
+# US City Weather Visualization
 Data visualization project of Amber Su, Chi Zhang, Curtis Xu for Cornell INFO 3300 <br /> 
 The visualization is built with d3.js <br /> 
 Original data source can be found here - https://github.com/zonination/weather-us <br /> 
